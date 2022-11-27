@@ -4,6 +4,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import HTTPException
 
 from .db import database
 
@@ -13,15 +14,7 @@ LOGGER = logging.getLogger(__name__)
 app = FastAPI()
 
 
-class MissingDateException(Exception):
-    """Raise when an expected date is missing"""
-
-
-class MissingCodeOrSlugException(Exception):
-    """Raise when either origin or destination code/slug is missing"""
-
-
-class InvalidDateRangeException(Exception):
+class InvalidDateRangeException(HTTPException):
     """Raise when start date is greater than end date."""
 
 
@@ -79,18 +72,10 @@ async def average_rates(date_from: datetime.date,
     :raise InvalidDateRangeException: when date_to predates date_from
     :raise MissingCodeOrSlugException: when port code or slug is missing
     """
-    if not date_to or not date_from:
-        LOGGER.error("Either the start or end date is missing.")
-        raise MissingDateException
     if date_from > date_to:
-        LOGGER.error("Invalid date range, start date is greater than end date.")
-        raise InvalidDateRangeException
-    if not origin:
-        LOGGER.error("Origin code or slug is missing.")
-        raise MissingCodeOrSlugException
-    if not destination:
-        LOGGER.error("Destination code or slug is missing.")
-        raise MissingCodeOrSlugException
+        error_message = "Invalid date range, start date is greater than end date."
+        LOGGER.error(error_message)
+        raise InvalidDateRangeException(status_code=400, detail=error_message)
 
     origins = [origin] if origin == origin.upper() else \
         await ports_slug_to_code(origin)
