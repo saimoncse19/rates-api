@@ -82,3 +82,6 @@ curl -X 'GET' 'http://0.0.0.0:8000/rates?date_from=2016-01-11&date_to=2016-01-10
 The API returns `null` for average_prices where the total number of price is less than 3 on a given day between two geographical regions.
 
 ![](https://i.imgur.com/PwHzshp.png)
+
+#### Request with root regions:
+![](https://i.imgur.com/5SM9mSn.png)
