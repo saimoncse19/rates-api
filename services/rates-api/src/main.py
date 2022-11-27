@@ -68,9 +68,7 @@ async def average_rates(date_from: datetime.date,
     :type destination: str
     :return: average prices between origin to destination for each day
     :rtype: JSONResponse
-    :raise MissingDateException: when an expected date is missing
     :raise InvalidDateRangeException: when date_to predates date_from
-    :raise MissingCodeOrSlugException: when port code or slug is missing
     """
     if date_from > date_to:
         error_message = "Invalid date range, start date is greater than end date."
