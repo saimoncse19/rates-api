@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  rates-api:
+    container_name: rates-api-services
+    build:
+      context: ./services/rates-api
+      dockerfile: Dockerfile
+    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./services/rates-api:/rates-api
+    ports:
+      - "8000:8000"
+    restart: "always"
