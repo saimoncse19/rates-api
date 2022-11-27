@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
+from databases.core import Record
 
 from .db import database
 
@@ -18,6 +19,19 @@ class InvalidDateRangeException(HTTPException):
     """Raise when start date is greater than end date."""
 
 
+async def get_codes_from_slugs(slugs: list[str]) -> list[Record]:
+    """
+    Retrieve port codes based on a list of region slugs
+    :param slugs: a list of region slugs
+    :type slugs: list[str]
+    :return: a list of db records
+    :rtype: list[Record]
+    """
+    ports = await database.fetch_all(f"SELECT code, name FROM ports "
+                                     f"WHERE parent_slug IN ('{get_query_compatible_list(slugs)}')")
+    return ports
+
+
 async def ports_slug_to_code(slug: str) -> list[str]:
     """
     Retrieve all the port codes for a given slug that represents a geographic region
@@ -27,7 +41,15 @@ async def ports_slug_to_code(slug: str) -> list[str]:
     :return: A list of port codes for a given region slug
     :rtype: list[str]
     """
-    ports = await database.fetch_all(f"SELECT code FROM ports WHERE parent_slug='{slug}'")
+    regions = await database.fetch_all(f"SELECT slug from regions where slug='{slug}'"
+                                       f" and parent_slug IS NULL")
+    root_regions = jsonable_encoder(regions)
+    if not root_regions:
+        ports = await get_codes_from_slugs([slug])
+    else:
+        slug_of_root = root_regions[0].get("slug")
+        all_regions = await database.fetch_all(f"SELECT slug from regions where parent_slug='{slug_of_root}'")
+        ports = await get_codes_from_slugs([region.slug for region in all_regions])
     return [port.code for port in ports]
 
 
