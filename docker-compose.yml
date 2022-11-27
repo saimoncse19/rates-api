@@ -6,7 +6,7 @@ services:
     build:
       context: ./services/rates-api
       dockerfile: Dockerfile
-    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn src.main:app --reload --host 0.0.0.0 --port 8000'
     volumes:
       - ./services/rates-api:/rates-api
     ports:
