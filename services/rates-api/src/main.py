@@ -1,6 +1,11 @@
+import logging
+
 from fastapi import FastAPI
 
 from .db import database
+
+logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger(__name__)
 
 app = FastAPI()
 
