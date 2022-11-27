@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "rates-api"
+version = "0.1.0"
+description = "A REST API that provides average prices for each day between two geographical regions"
+authors = ["saimoncse19 <saimoncse19@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.87.0"
+uvicorn = {extras = ["standard"], version = "^0.20.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
