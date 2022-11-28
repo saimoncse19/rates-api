@@ -109,7 +109,7 @@ async def average_rates(date_from: datetime.date,
     ELSE null END) as average_price
     FROM prices WHERE orig_code IN ('{get_query_compatible_list(origins)}')
     and dest_code IN ('{get_query_compatible_list(destinations)}')
-    and day BETWEEN '{date_from}' and  '{date_to}' GROUP BY day
+    and day BETWEEN '{date_from}' and  '{date_to}' GROUP BY day, ORDER BY day
     """
 
     average_prices_objs = await database.fetch_all(query)
