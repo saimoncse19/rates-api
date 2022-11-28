@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
@@ -74,7 +74,6 @@ async def home():
     return {"message": "Welcome! from Rates API."}
 
 
-@app.get("/rates")
 async def average_rates(date_from: datetime.date,
                         date_to: datetime.date,
                         origin: str,
@@ -115,6 +114,13 @@ async def average_rates(date_from: datetime.date,
     average_prices_objs = await database.fetch_all(query)
     average_prices = jsonable_encoder(average_prices_objs)
     return JSONResponse(content=average_prices)
+
+
+@app.get("/rates")
+async def rates(average_rate: JSONResponse = Depends(average_rates)) -> JSONResponse:
+    """The endpoint to get average prices between origin and destination for a
+    given date range"""
+    return average_rate
 
 
 @app.on_event("startup")
