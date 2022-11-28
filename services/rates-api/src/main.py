@@ -32,7 +32,7 @@ async def get_codes_from_slugs(slugs: list[str]) -> list[Record]:
     return ports
 
 
-async def ports_slug_to_code(slug: str) -> list[str]:
+async def slug_to_codes(slug: str) -> list[str]:
     """
     Retrieve all the port codes for a given slug that represents a geographic region
 
@@ -98,9 +98,9 @@ async def average_rates(date_from: datetime.date,
         raise InvalidDateRangeException(status_code=400, detail=error_message)
 
     origins = [origin] if origin == origin.upper() else \
-        await ports_slug_to_code(origin)
+        await slug_to_codes(origin)
     destinations = [destination] if destination == destination.upper() else \
-        await ports_slug_to_code(destination)
+        await slug_to_codes(destination)
 
     query = f"""SELECT day, (CASE WHEN COUNT(*) > 2 THEN avg(price) ELSE null END) as average_price 
     FROM prices WHERE orig_code IN ('{get_query_compatible_list(origins)}')
