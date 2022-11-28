@@ -22,13 +22,14 @@ The `rates-api` and `db` services are containerized using `docker` and orchestra
     ```
 4. Run the following command to start the services: (Supply `-d` flag to run in detached mode)
     ```shell
-    docker-compose --env-file=./.env.dev up
+    docker-compose --env-file=./.env.dev up --build
     ```
+    > Note: If you get `Port already in use` error for postgres then please stop your local postgres with `sudo service postgresql stop`
 5. If everything works as expected, you should be able to open `http://0.0.0.0:8000` which will greet you with the following:
     ![](https://i.imgur.com/ImLLQ3V.png)
 
 
-> Note: If you get `Port already in use` error for postgres then please stop your local postgres with `sudo service postgresql stop`
+
 
 
 ## The Rates API endpoint
@@ -83,5 +84,16 @@ The API returns `null` for average_prices where the total number of price is les
 
 ![](https://i.imgur.com/PwHzshp.png)
 
+
 #### Request with root regions:
-![](https://i.imgur.com/5SM9mSn.png)
+![](https://i.imgur.com/GPUrreG.png)
+
+
+## Run the test
+
+Execute the following command to run the test cases:
+
+```shell
+docker-compose --env-file=./.env.dev up --build -d
+docker-compose exec rates-api pytest .
+```
