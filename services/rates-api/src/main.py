@@ -99,10 +99,11 @@ async def average_rates(date_from: datetime.date,
         LOGGER.error(error_message)
         raise InvalidDateRangeException(status_code=400, detail=error_message)
 
-    origins = [origin] if origin == origin.upper() else \
-        await slug_to_codes(origin)
-    destinations = [destination] if destination == destination.upper() else \
-        await slug_to_codes(destination)
+    origins = ([origin] if origin == origin.upper() and len(origin) == 5 else
+               await slug_to_codes(origin))
+    destinations = ([destination] if destination == destination.upper()
+                    and len(origin) == 5 else
+                    await slug_to_codes(destination))
 
     query = f"""SELECT day, (CASE WHEN COUNT(*) > 2 THEN avg(price)
     ELSE null END) as average_price
