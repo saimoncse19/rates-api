@@ -28,7 +28,8 @@ async def get_codes_from_slugs(slugs: list[str]) -> list[Record]:
     :rtype: list[Record]
     """
     ports = await database.fetch_all(f"SELECT code, name FROM ports "
-                                     f"WHERE parent_slug IN ('{get_query_compatible_list(slugs)}')")
+                                     f"WHERE parent_slug IN"
+                                     f"('{get_query_compatible_list(slugs)}')")
     return ports
 
 
@@ -48,7 +49,8 @@ async def slug_to_codes(slug: str) -> list[str]:
         ports = await get_codes_from_slugs([slug])
     else:
         slug_of_root = root_regions[0].get("slug")
-        all_regions = await database.fetch_all(f"SELECT slug from regions where parent_slug='{slug_of_root}'")
+        all_regions = await database.fetch_all(f"SELECT slug from regions where "
+                                               f"parent_slug='{slug_of_root}'")
         ports = await get_codes_from_slugs([region.slug for region in all_regions])
     return [port.code for port in ports]
 
@@ -78,7 +80,8 @@ async def average_rates(date_from: datetime.date,
                         origin: str,
                         destination: str) -> JSONResponse:
     """
-    Retrieve average prices for each day on a route between origin and destination for the given date range
+    Retrieve average prices for each day on a route between origin and
+    destination for the given date range
 
     :param date_from: the start date
     :type date_from: datetime.date
@@ -102,7 +105,8 @@ async def average_rates(date_from: datetime.date,
     destinations = [destination] if destination == destination.upper() else \
         await slug_to_codes(destination)
 
-    query = f"""SELECT day, (CASE WHEN COUNT(*) > 2 THEN avg(price) ELSE null END) as average_price 
+    query = f"""SELECT day, (CASE WHEN COUNT(*) > 2 THEN avg(price)
+    ELSE null END) as average_price
     FROM prices WHERE orig_code IN ('{get_query_compatible_list(origins)}')
     and dest_code IN ('{get_query_compatible_list(destinations)}')
     and day BETWEEN '{date_from}' and  '{date_to}' GROUP BY day
