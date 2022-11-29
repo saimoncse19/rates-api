@@ -29,4 +29,6 @@ class TestRatesRoute:
         response = mock_app.get("/rates?date_from=2021-01-01&date_to=2021-01-10&origin=china_main&"
                                 "destination=northern_europe")
         assert response.status_code == 200
+        # should return [] as testdb is empty
+        assert response.json() == []
 
