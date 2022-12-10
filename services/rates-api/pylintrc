@@ -1,0 +1,21 @@
+[MESSAGES CONTROL]
+disable = locally-disabled,fixme,too-few-public-methods,duplicate-code,
+          missing-docstring,redefined-outer-name,unused-variable,unused-argument,
+          protected-access, no-member, too-many-branches, too-many-statements,
+          too-many-arguments, too-many-return-statements, logging-fstring-interpolation,
+          too-many-locals, too-many-instance-attributes, no-else-raise, raise-missing-from,
+          consider-using-f-string
+
+[BASIC]
+good-names = x,i,j,k,_,id
+const-rgx = (([A-Z_][A-Z0-9_]*)|(__.*__)|(log))$
+
+[FORMAT]
+max-line-length = 89
+
+[DESIGN]
+max-statements = 24
+max-module-lines = 1500
+
+[REPORTS]
+reports = no

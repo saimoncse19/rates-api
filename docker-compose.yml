@@ -1,0 +1,36 @@
+version: '3.3'
+
+services:
+  rates-api:
+    container_name: rates-api-services
+    build:
+      context: ./services/rates-api
+      dockerfile: Dockerfile
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn src.main:app --reload --host 0.0.0.0 --port 8000'
+    volumes:
+      - ./services/rates-api:/rates-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-db:5432/${POSTGRES_DB_NAME}
+    depends_on:
+      - db
+    restart: "always"
+
+  db:
+    container_name: postgres-db
+    build:
+      context: ./services/db
+      dockerfile: Dockerfile
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+    ports:
+      - 5432:5432
+    restart: "always"
+
+volumes:
+  postgres_data:
